@@ -32,30 +32,12 @@ void Setup(AlxWindow* w){
 	);
 
 	Scene_Add(&scene,(TilingManager[]){
-		TilingManager_Make(
+		TilingManager_New(
 			(void*)&scene,
 			Component1_React,
 			Rect_New((Vec2){ 0.1f,0.1f },(Vec2){ 0.8f,0.8f }),
 			GRAY,
-			GREEN,
-			(void*[]){
-				(Button[]){
-					Button_NewStd(
-						(void*)&scene,
-						"Save",
-						Component2_React,
-						(Vec2){ 32.0f,32.0f },
-						Rect_New((Vec2){ 0.0f,0.0f },(Vec2){ 0.25f,0.33f }),
-						DARK_CYAN,
-						GREEN
-					) 
-				},
-				NULL
-			},
-			(unsigned int[]){
-				sizeof(Button),
-				0UL
-			}
+			GREEN
 		) 
 	},sizeof(TilingManager));
 }
@@ -63,17 +45,22 @@ void Setup(AlxWindow* w){
 void Update(AlxWindow* w){
 	if(w->Strokes[ALX_MOUSE_L].PRESSED && w->Strokes[ALX_KEY_CTRL].DOWN){
 		TilingManager* const b = (TilingManager*)scene.childs.First->Memory;
+		
+		const Vec2 dim = { 100.0f,100.0f };
 		Button new_button = Button_NewStd(
 			&b->renderable,
 			"New Button",
 			Component2_React,
 			(Vec2){ 32.0f,32.0f },
-			Rect_New(Vec2_Div(Vec2_Sub(GetMouse(),b->renderable.rect.p),b->renderable.rect.d),(Vec2){ 0.25f,0.25f }),
+			Rect_New(Vec2_Add(GetMouse(),Vec2_Mulf(dim,0.5f)),dim),
 			DARK_RED,
 			GREEN
 		);
-
 		TilingManager_Insert(b,&new_button,sizeof(Button));
+	}else if(w->Strokes[ALX_MOUSE_L].PRESSED && w->Strokes[ALX_KEY_SHIFT].DOWN){
+		TilingManager* const b = (TilingManager*)scene.childs.First->Memory;
+		const TilingManager_Index id = TilingManager_GetId(b,GetMouse());
+		TilingManager_Remove(b,id);
 	}
 
 	Scene_Adapt(&scene,GetWidth(),GetHeight());
