@@ -3,24 +3,22 @@
 #include "/home/codeleaded/System/Static/Library/Random.h"
 
 Scene scene;
+Timepoint start;
 
 void Component1_React(void* parent,TilingManager* b,TilingManagerEvent* be){
 
 }
 void Component2_React(void* parent,Button* b,ButtonEvent* be){
-
-}
-void Component3_React(void* parent,Button* b,ButtonEvent* be){
-
-}
-void Component4_React(void* parent,Button* b,ButtonEvent* be){
-
-}
-void Component5_React(void* parent,Editor* b,EditorEvent* be){
-
+	if(be->eid == EVENT_PRESSED){
+		printf("[%lld] Event: Pressed!\n",(Time_Nano() - start) / TIME_NANO_SECONDS);
+	}else if(be->eid == EVENT_DRAGGED){
+		printf("[%lld] Event: Dragged!\n",(Time_Nano() - start) / TIME_NANO_SECONDS);
+	}
 }
 
 void Setup(AlxWindow* w){
+	start = Time_Nano();
+
 	// Button ProgressBar Scrollbar Slider Textbox Selection Rotatable
 	scene = Scene_New(
 		NULL,
