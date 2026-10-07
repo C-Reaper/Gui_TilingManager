@@ -41,19 +41,22 @@ void Setup(AlxWindow* w){
 }
 
 void Update(AlxWindow* w){
+	const Vec2 dim = { 100.0f,100.0f };
+
 	if(w->Strokes[ALX_MOUSE_L].PRESSED && w->Strokes[ALX_KEY_CTRL].DOWN){
 		TilingManager* const b = (TilingManager*)scene.childs.First->Memory;
+		const Pixel colors[] = { WHITE,DARK_RED,ROSE,BLUE,YELLOW,ORANGE };
 		
-		const Vec2 dim = { 100.0f,100.0f };
 		Button new_button = Button_NewStd(
 			&b->renderable,
 			"New Button",
 			Component2_React,
 			(Vec2){ 32.0f,32.0f },
 			Rect_New(Vec2_Add(GetMouse(),Vec2_Mulf(dim,0.5f)),dim),
-			DARK_RED,
+			colors[(uint32_t)(w->MouseX + w->MouseY) % (sizeof(colors) / sizeof(*colors))],
 			GREEN
 		);
+
 		TilingManager_Insert(b,&new_button,sizeof(Button));
 	}else if(w->Strokes[ALX_MOUSE_L].PRESSED && w->Strokes[ALX_KEY_SHIFT].DOWN){
 		TilingManager* const b = (TilingManager*)scene.childs.First->Memory;
@@ -69,6 +72,22 @@ void Update(AlxWindow* w){
 	Clear(BLACK);
 
 	Scene_Render(WINDOW_STD_ARGS,&scene);
+
+
+	const Rect insert = Rect_New(GetMouse(),dim);
+
+	if(!w->Strokes[ALX_MOUSE_L].DOWN && w->Strokes[ALX_KEY_CTRL].DOWN){
+		TilingManager* const b = (TilingManager*)scene.childs.First->Memory;
+		const Rect rect = TilingManager_SplitRect(b,insert);
+		Rect_RenderAlpha(WINDOW_STD_ARGS,rect,0x5544FF44);
+	}
+	if(!w->Strokes[ALX_MOUSE_L].DOWN && w->Strokes[ALX_KEY_SHIFT].DOWN){
+		TilingManager* const b = (TilingManager*)scene.childs.First->Memory;
+		const Rect rect = TilingManager_SlotRect(b,insert);
+		Rect_RenderAlpha(WINDOW_STD_ARGS,rect,0x55FF4444);
+	}
+	
+	//Rect_RenderAlpha(WINDOW_STD_ARGS,insert,0x770000FF);
 }
 
 void Delete(AlxWindow* w){
